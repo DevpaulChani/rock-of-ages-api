@@ -19,8 +19,6 @@ jobs:
           role-to-assume: ${{ secrets.OIDC_ROLE_TO_ASSUME }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - uses: aws-actions/amazon-ecr-login@v2
-
       - name: Trigger remote deployment on EC2 via SSM
         run: |
           aws ssm send-command \
@@ -33,6 +31,6 @@ jobs:
               "docker pull \"$IMAGE\"",
               "docker stop rock-of-ages-api || true",
               "docker rm rock-of-ages-api || true",
-              "docker run --pull always -d --name rock-of-ages-api -p 80:8000 \\"$IMAGE\\""
-              ]' \\    
-          --region \${{ secrets.AWS_REGION }}
+              "docker run -d --name rock-of-ages-api -p 80:8000 \"$IMAGE\""
+              ]' \
+          --region ${{ secrets.AWS_REGION }}
